@@ -200,16 +200,29 @@ const String EN_NOTIFY_KEY = 'enableNotifications';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   initLogging();
-  log.info("Starting application in main()");
+
+  // Set up notifications (prompt user)
   notifications.initializeNotifications();
+
+  // Get checkbox status
   await PersistentMap.init();
   final pmap = PersistentMap.instance;
+
+  // If doesn't have key (first bootup) then make the key
   if (!pmap.contains(EN_NOTIFY_KEY)) {
-    pmap.set(EN_NOTIFY_KEY, true);
-    registerFutureNotifications();
-  } else if (pmap.get(EN_NOTIFY_KEY, defaultValue: false) == true) {
-    registerFutureNotifications();
+    await pmap.set(EN_NOTIFY_KEY, true);
   }
+
+  // Register all notifications
+  registerFutureNotifications().then((value) {
+    // If checkbox is unchecked, deschedule notifications
+    log.info("Checking if should deschedule notifications");
+    final pmap2 = PersistentMap.instance;
+    if (pmap2.get(EN_NOTIFY_KEY, defaultValue: false) == false) {
+      notifications.descheduleAllNotifications();
+    }
+  });
+
   runApp(const MyApp());
 }
 
