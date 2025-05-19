@@ -206,10 +206,9 @@ void main() async {
   final pmap = PersistentMap.instance;
   if (!pmap.contains(EN_NOTIFY_KEY)) {
     pmap.set(EN_NOTIFY_KEY, true);
-    await registerFutureNotifications();
-  }
-  if (pmap.get(EN_NOTIFY_KEY, defaultValue: false) == true) {
-    await registerFutureNotifications();
+    registerFutureNotifications();
+  } else if (pmap.get(EN_NOTIFY_KEY, defaultValue: false) == true) {
+    registerFutureNotifications();
   }
   runApp(const MyApp());
 }
