@@ -64,10 +64,10 @@ Future<void> notifyDailyQuoteOnDate(DateTime date) async {
   return notifyAtDate(title, body, date, id);
 }
 
-void registerNQuoteDays(DateTime startDateTime, int numDays) {
+Future<void> registerNQuoteDays(DateTime startDateTime, int numDays) async {
   for (int i = 0; i < numDays; i++) {
     final notifyDate = startDateTime.add(Duration(days: i));
-    notifyDailyQuoteOnDate(notifyDate);
+    await notifyDailyQuoteOnDate(notifyDate);
   }
 }
 

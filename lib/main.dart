@@ -185,14 +185,14 @@ Widget buildQuoteFutureWidget(Future<Quote?> quoteFuture) {
   );
 }
 
-void registerFutureNotifications() {
+Future<void> registerFutureNotifications() async {
   int numDays = 50;
-  int notifyHour = 10; // 10 AM
-  int notifyMinute = 0;
+  int notifyHour = 15; // 3 PM
+  int notifyMinute = 50; // 50
   final now = DateTime.now();
   final startTime = DateTime(now.year, now.month, now.day, notifyHour, notifyMinute);
-  notifications.descheduleAllNotifications();
-  notifications.registerNQuoteDays(startTime, numDays);
+  await notifications.descheduleAllNotifications();
+  await notifications.registerNQuoteDays(startTime, numDays);
 }
 
 const String EN_NOTIFY_KEY = 'enableNotifications';
@@ -206,9 +206,10 @@ void main() async {
   final pmap = PersistentMap.instance;
   if (!pmap.contains(EN_NOTIFY_KEY)) {
     pmap.set(EN_NOTIFY_KEY, true);
+    await registerFutureNotifications();
   }
   if (pmap.get(EN_NOTIFY_KEY, defaultValue: false) == true) {
-    registerFutureNotifications();
+    await registerFutureNotifications();
   }
   runApp(const MyApp());
 }
